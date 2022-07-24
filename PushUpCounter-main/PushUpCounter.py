@@ -30,14 +30,19 @@ while cap.isOpened():
     if len(lmList) != 0:
         elbow_left = detector.findAngle(img, 11, 13, 15)
         elbow_right = detector.findAngle(img, 12, 14, 16)
-        leg_left = detector.findAngle(img,24,26,28)
+        leg_left = detector.findAngle(img,23,25,27)
+        leg_right = detector.findAngle(img, 24, 26, 28)
+
         temp = []
-        temp = lmList[13][2]
+        temp.append(elbow_left)
+        temp.append(elbow_right)
+        temp.append(leg_left)
+        temp.append(leg_right)
         """shoulder = detector.findAngle(img, 13, 11, 23)
         hip = detector.findAngle(img, 11, 23,25)"""
 
 
-        
+
         #Percentage of success of pushup
         per_left = np.interp(elbow_left, (90, 160), (0, 100))
         per_right = np.interp(elbow_right, (90, 160), (0, 100))
@@ -66,6 +71,15 @@ while cap.isOpened():
                     if direction == 0:
                         count += 0.5
                         direction = 1
+                        Data = {
+                            "pushup_data": temp
+                        }
+                        print(temp)
+
+                        # Creating document
+                        MyData = db.employees
+                        # Inserting data
+                        MyData.insert_one(Data)
                 else:
                     feedback = "Fix Form"
 
@@ -75,15 +89,6 @@ while cap.isOpened():
                     if direction == 1:
                         count += 0.5
                         direction = 0
-                        Data ={
-                          "pushup_data": temp
-                        }
-                        print(temp)
-
-                        # Creating document
-                        MyData = db.employees
-                        # Inserting data
-                        MyData.insert_one(Data)
                 else:
                     feedback = "Fix Form"
                         # form = 0
